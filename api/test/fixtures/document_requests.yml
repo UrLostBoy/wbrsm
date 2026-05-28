@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  student: student_one
+  status: 1
+  delivery_method: 1
+  payment_method: 1
+  payment_status: 1
+  payment_verified_at: 1
+  shipping_fee_cents: 1,
+  unpaid_bill: true
+  missing_requirements: false
+
+two:
+  student: student_two
+  status: 1
+  delivery_method: 1
+  payment_method: 1
+  payment_status: 1
+  payment_verified_at: 1
+  shipping_fee_cents: 1,
+  unpaid_bill: false
+  missing_requirements: true
