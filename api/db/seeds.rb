@@ -258,3 +258,48 @@ puts "  - Students: #{Student.count}"
 puts "Total Document Types: #{DocumentType.count}"
 puts "Total Student Profiles: #{StudentProfile.count}"
 puts "Total Deficiencies: #{Deficiency.count}"
+
+puts "Creating document request with escalation ticket..."
+
+seed_student = Student.find_by!(email: "enrolled.college@example.com")
+seed_staff   = Staff.first
+
+cert_of_enrollment = DocumentType.find_by!(name: "Certificate of Enrollment")
+form_137           = DocumentType.find_by!(name: "Form 137")
+
+old_request = DocumentRequest.new(
+  user_id: seed_student.id,
+  status: :processing,
+  delivery_method: :self_pickup,
+  payment_method: :cash,
+  payment_status: :paid,
+  payment_verified_at: 3.months.ago.to_i,
+  shipping_fee_cents: 0,
+  created_at: 3.months.ago,
+  updated_at: 3.months.ago
+)
+old_request.id_verification_photo.attach(
+  io: File.open(Rails.root.join("test/fixtures/files/id_verification_photo.jpg")),
+  filename: "id_verification_photo.jpg",
+  content_type: "image/jpeg"
+)
+old_request.save!
+old_request.document_request_items.create!(document_type: cert_of_enrollment, quantity: 1)
+old_request.document_request_items.create!(document_type: form_137, quantity: 2)
+
+old_ticket = EscalationTicket.create!(
+  student: seed_student,
+  document_request: old_request,
+  assigned_staff: seed_staff,
+  subject: "Inquiry about processing status of my document request",
+  status: :open,
+  created_at: 2.months.ago,
+  updated_at: 2.months.ago
+)
+
+old_ticket.escalation_messages.create!(
+  sender: seed_student,
+  body: "Good day! I submitted my document request 3 weeks ago and I haven't heard any updates. Could you please check the current status? Thank you.",
+  created_at: 3.months.ago,
+  updated_at: 3.months.ago
+)
